@@ -8,11 +8,14 @@ import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.ViewAnimationUtils;
+import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
 import butterknife.Bind;
@@ -20,8 +23,8 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 public class MainActivity extends AppCompatActivity {
-    @Bind(R.id.frame1)
-    FrameLayout mFrameLayout1;
+    @Bind(R.id.recyclerView)
+    RecyclerView mRecyclerView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,22 +43,24 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-    }
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        mRecyclerView.setAdapter(new RecyclerView.Adapter<ViewHolder>() {
+            @Override
+            public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+                return new ViewHolder(getLayoutInflater().inflate(R.layout.item, parent, false));
+            }
 
-    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-    @OnClick(R.id.frame1) void onClickFrame() {
-        int radius = (int) Math.hypot(mFrameLayout1.getWidth()/2, mFrameLayout1.getHeight()/2);
-        Animator animator = ViewAnimationUtils.createCircularReveal(
-                mFrameLayout1,
-                (int) mFrameLayout1.getWidth()/2,
-                (int) mFrameLayout1.getHeight()/2,
-                0,
-                radius
-        );
-        mFrameLayout1.setBackground(
-                new ColorDrawable(
-                        getResources().getColor(R.color.green)));
-        animator.start();
+            @Override
+            public void onBindViewHolder(ViewHolder holder, int position) {
+
+            }
+
+            @Override
+            public int getItemCount() {
+                return 100;
+            }
+        });
+
     }
 
     @Override
@@ -78,5 +83,30 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    static class ViewHolder extends RecyclerView.ViewHolder {
+        @Bind(R.id.frame) FrameLayout mFrameLayout;
+        public ViewHolder(View view) {
+            super(view);
+            ButterKnife.bind(this, view);
+        }
+
+        @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+        @OnClick(R.id.frame)
+        void onClickFrame() {
+            int radius = (int) Math.hypot(mFrameLayout.getWidth()/2, mFrameLayout.getHeight()/2);
+            Animator animator = ViewAnimationUtils.createCircularReveal(
+                    mFrameLayout,
+                    (int) mFrameLayout.getWidth()/2,
+                    (int) mFrameLayout.getHeight()/2,
+                    0,
+                    radius
+            );
+            mFrameLayout.setBackground(
+                    new ColorDrawable(
+                            mFrameLayout.getResources().getColor(R.color.green)));
+            animator.start();
+        }
     }
 }
